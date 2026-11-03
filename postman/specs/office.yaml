@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: Di Lam Online API
+  version: 0.1.0
+  description: Single-room authoritative game. All mutations require a private operator token. Business rejections return 200 with ok=false. Public sockets only receive snapshots.
+servers:
+  - url: http://127.0.0.1:3101
+tags:
+  - name: Public
+  - name: Admin
+paths:
+  /api/health:
+    get:
+      operationId: health
+      tags: [Public]
+      summary: Read process health and storage mode
+      responses:
+        '200':
+          description: Process initialized (not an external TikTok connectivity check)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, storage]
+                properties:
+                  ok: { type: boolean }
+                  storage: { type: string, enum: [memory, postgres] }
+  /api/state:
+    get:
+      operationId: state
+      tags: [Public]
+      summary: Get a snapshot, at most 50 employees and 15 recent effects
+      responses:
+        '200':
+          description: GameState as defined in packages/shared/src/index.ts; no raw chat or admin token
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [roomId, sessionId, players, bossHp, phase, paused]
+                properties:
+                  roomId: { type: string }
+                  sessionId: { type: string }
+                  players: { type: array, maxItems: 50, items: { type: object } }
+                  bossHp: { type: integer, minimum: 0 }
+                  phase: { type: string, enum: [work, incident, vote, battle, results] }
+                  paused: { type: boolean }
+  /api/admin/command:
+    post:
+      operationId: adminCommand
+      tags: [Admin]
+      summary: Pause, resume, start voting, add ten demo employees, or reset all progress
+      security: [{ adminToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [command]
+              properties:
+                command: { type: string, enum: [pause, resume, drama, seed, reset] }
+      responses:
+        '200': { $ref: '#/components/responses/Action' }
+        '400': { description: Invalid command }
+        '401': { description: Missing or invalid token }
+        '429': { description: Operator rate limit exceeded }
+        '503': { description: Queue full or shutting down }
+  /api/admin/simulate:
+    post:
+      operationId: simulate
+      tags: [Admin]
+      summary: Submit one simulator event; server fixes source, room and timestamp
+      security: [{ adminToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventId, type, user, payload]
+              properties:
+                eventId: { type: string, minLength: 1, maxLength: 180 }
+                type: { type: string, enum: [comment, like, follow, gift] }
+                user:
+                  type: object
+                  required: [platformUserId, displayName]
+                  properties:
+                    platformUserId: { type: string, minLength: 1, maxLength: 100 }
+                    displayName: { type: string, maxLength: 100 }
+                payload:
+                  type: object
+                  properties:
+                    text: { type: string, maxLength: 300 }
+                    count: { type: integer, minimum: 1, maximum: 10000 }
+                    giftId: { type: string, maxLength: 100 }
+      responses:
+        '200': { $ref: '#/components/responses/Action' }
+        '400': { description: Invalid event }
+        '401': { description: Missing or invalid token }
+        '429': { description: More than 120 mutations per second per IP }
+        '503': { description: Queue full or shutting down }
+  /api/admin/tiktok/connect:
+    post:
+      operationId: connectTikTok
+      tags: [Admin]
+      summary: Connect an experimental TikTok LIVE adapter; account must be live
+      security: [{ adminToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username: { type: string, minLength: 1, maxLength: 24 }
+      responses:
+        '200': { $ref: '#/components/responses/Action' }
+        '400': { description: Invalid username }
+        '401': { description: Missing or invalid token }
+        '409': { description: A connection attempt is already in progress }
+        '429': { description: Rate limit exceeded }
+  /api/admin/tiktok/disconnect:
+    post:
+      operationId: disconnectTikTok
+      tags: [Admin]
+      summary: Disconnect and cancel automatic reconnect
+      security: [{ adminToken: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Action' }
+        '401': { description: Missing or invalid token }
+        '429': { description: Rate limit exceeded }
+components:
+  securitySchemes:
+    adminToken: { type: http, scheme: bearer }
+  responses:
+    Action:
+      description: Accepted request with gameplay result. Repeated eventId is a no-op within the dedupe window.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ok, message]
+            properties:
+              ok: { type: boolean }
+              message: { type: string }
+              duplicate: { type: boolean }

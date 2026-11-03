@@ -1,0 +1,31 @@
+{
+  "contract": "chrome-contract.json",
+  "targetViewports": ["1080x1920", "390x844", "1440x900"],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Rendered header/footer landmarks and a labeled command list retain text captions. Keyboard Tab shows a visible solid focus outline in the dashboard. Browser measurements check full command text and header bounds; no interactive controls are added to the broadcast frame."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Chromium checks the 1080x1920 broadcast, 390x844 phone, 1440x900 dashboard and narrow dashboard. All ten commands and both complete vote arguments remain visible; the office is exactly 75% of the stage, the footer reaches its bottom, and no command cards or stage rows overlap or create horizontal scrolling. See chrome-checks.json."
+  },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "Held the lazy 3D chunk: the loading status and all ten footer commands remain visible in chrome-loading.png." },
+    "empty": { "status": "pass", "evidence": "An isolated zero-player snapshot shows the !join instruction and the empty leaderboard caption without hiding commands; chrome-empty.png." },
+    "error": { "status": "pass", "evidence": "Blocked the socket and aborted the 3D chunk: the header says disconnected, the office offers WebGL/reload recovery guidance, and all commands remain visible; chrome-disconnected.png." },
+    "partial": { "status": "pass", "evidence": "Ten employees with an empty leaderboard still render the office and a safe top-drama placeholder; chrome-partial.png." },
+    "success": { "status": "pass", "evidence": "Mocked snapshots show ten employees, day 999, a long Vietnamese top-drama name and simulator/LIVE badges. Full command text fits in the measured stage and preview layouts; chrome-1080.png and chrome-390.png." },
+    "permission": { "status": "pass", "evidence": "A clean dashboard browser context has no admin token and its Tung drama control stays disabled. No admin actions or mutations are sent to the running server; chrome-dashboard-1440.png." }
+  },
+  "renderedEvidence": [
+    { "viewport": "1080x1920", "artifact": "chrome-1080.png", "observation": "Populated 3D office, restyled scoreboard header and complete command board at the bottom." },
+    { "viewport": "390x844", "artifact": "chrome-390.png", "observation": "Portrait phone view retains all commands, full vote arguments and the LIVE badge; the fixed 9:16 stage is letterboxed inside the taller viewport." },
+    { "viewport": "1440x900", "artifact": "chrome-dashboard-1440.png", "observation": "Dashboard preview uses the same header/footer and retains locked admin controls." },
+    { "viewport": "390x844", "artifact": "chrome-dashboard-390.png", "observation": "Narrow dashboard preview has no horizontal scrolling or overlapping command cards." },
+    { "viewport": "390x844", "artifact": "chrome-empty.png", "observation": "Empty office retains a join instruction and the full footer." },
+    { "viewport": "390x844", "artifact": "chrome-partial.png", "observation": "Available employees remain visible when the leaderboard is empty." },
+    { "viewport": "1080x1920", "artifact": "chrome-loading.png", "observation": "3D loading does not displace the header or command footer." },
+    { "viewport": "1080x1920", "artifact": "chrome-disconnected.png", "observation": "Disconnected and failed-3D states keep the complete command board and show recovery guidance." }
+  ],
+  "limits": ["Snapshots and socket messages are mocked locally, not real TikTok events.", "No claim about physical GPU frame rate, OBS capture or TikTok delivery latency."]
+}

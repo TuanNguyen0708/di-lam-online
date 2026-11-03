@@ -1,0 +1,105 @@
+{
+  "checks": [
+    {
+      "label": "1080x1920 / ten employees",
+      "officeFraction": 0.75,
+      "canvasFills": true,
+      "noNameOverlap": true,
+      "bounded": true,
+      "rows": true,
+      "noScroll": true,
+      "fonts": [
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08
+      ],
+      "employeeCount": 10
+    },
+    {
+      "label": "1080x1920 / fifty long names",
+      "officeFraction": 0.75,
+      "canvasFills": true,
+      "noNameOverlap": true,
+      "bounded": true,
+      "rows": true,
+      "noScroll": true,
+      "fonts": [
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08,
+        28.08
+      ],
+      "employeeCount": 12
+    },
+    {
+      "label": "automatic floor rotation",
+      "before": 12,
+      "after": 12,
+      "changed": true
+    },
+    {
+      "label": "390x844 / fifty employees",
+      "officeFraction": 0.7500056340567463,
+      "canvasFills": true,
+      "noNameOverlap": true,
+      "bounded": true,
+      "rows": true,
+      "noScroll": true,
+      "fonts": [
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14,
+        10.14
+      ],
+      "employeeCount": 12
+    },
+    {
+      "label": "pause, defeated boss and reduced motion",
+      "passed": true
+    },
+    {
+      "label": "dashboard, narrow layout, keyboard focus and locked admin actions",
+      "focus": {
+        "tag": "A",
+        "outline": "solid"
+      },
+      "passed": true
+    },
+    {
+      "label": "3D load failure has explicit WebGL/reload guidance",
+      "passed": true
+    },
+    {
+      "label": "loading reserves the full office until the 3D chunk is ready",
+      "passed": true
+    },
+    {
+      "label": "Vite development stage also initializes 3D successfully",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

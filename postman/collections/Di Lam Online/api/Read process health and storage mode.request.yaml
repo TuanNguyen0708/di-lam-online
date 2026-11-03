@@ -1,0 +1,16 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/api/health"
+method: GET
+headers:
+  Accept: application/json
+settings: {}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |
+      pm.test('Health returns 200', () => pm.response.to.have.status(200));
+      pm.test('Game initialized', () => pm.expect(pm.response.json().ok).to.eql(true));
+      pm.test('Storage mode is explicit', () => pm.expect(['memory', 'postgres']).to.include(pm.response.json().storage));
+examples: ./.resources/Read process health and storage mode.resources/examples
+order: 1000

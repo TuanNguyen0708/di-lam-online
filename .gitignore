@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+coverage/
+test-results/
+
+# per-developer / session state (CLAUDE.md: gitignored)
+project.local.yaml
+production/session-state/
+production/session-logs/
+*.tsbuildinfo

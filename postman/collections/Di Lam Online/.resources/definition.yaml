@@ -1,0 +1,5 @@
+$kind: collection
+description: Single-room authoritative game. All mutations require a private operator token. Business rejections return 200 with ok=false. Public sockets only receive snapshots.
+variables:
+  baseUrl: http://127.0.0.1:3101
+  bearerToken: ""

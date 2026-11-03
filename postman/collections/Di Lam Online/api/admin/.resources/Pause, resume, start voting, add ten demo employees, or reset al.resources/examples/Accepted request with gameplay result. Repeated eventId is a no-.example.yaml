@@ -1,0 +1,31 @@
+$kind: http-example
+name: Accepted request with gameplay result. Repeated eventId is a no-op within the dedupe window.
+request:
+  url: "{{baseUrl}}/api/admin/command"
+  method: POST
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+    - key: Accept
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "command": "seed"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "string",
+        "duplicate": true
+      }
+order: 1000

@@ -1,0 +1,8 @@
+{
+  "surface": "TikTok LIVE 9:16 stage and its dashboard preview",
+  "job": "Read the office, boss, rooms and employee names while watching gameplay",
+  "hierarchy": ["office and employees", "boss HP", "current drama", "comment commands"],
+  "constraints": ["True Three.js 3D meshes, tilted perspective camera, lighting and shadows", "Office uses exactly 75 percent of the portrait frame height", "No letterboxing: the office fills its whole band; the bottom 35 percent (TikTok comment zone) carries no critical HUD", "Separate HTML signs and two-line names instead of tiny WebGL text", "Every employee in the snapshot (up to fifty) on stage at once; twelve desks, the rest work standing", "All critical HUD sits in the top 25 percent band", "Preserve existing cream, green and coral design; silent OBS source"],
+  "viewports": ["1080x1920", "390x844", "1440x900"],
+  "reference": "Local user screenshot: small FIT canvas, overlapping names, oversized drama and empty lower frame"
+}

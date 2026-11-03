@@ -1,0 +1,25 @@
+{
+  "contract": "contract.json: genuine Three.js 3D; office exactly 75% of a 9:16 frame; compact drama; readable independent HTML names; rotating twelve-seat floors",
+  "targetViewports": ["1080x1920", "390x844", "1440x900"],
+  "accessibility": { "status": "pass", "evidence": "Keyboard Tab produces visible focus; public stage has a descriptive accessible label; unauthorized dashboard actions remain disabled. Cream-backed dark employee names wrap into two lines, separate from furniture. Reduced-motion setting is exercised; no audio is created." },
+  "responsive": { "status": "pass", "evidence": "Measured office is 1080x1440 at 1080x1920, and 390x520 inside a 390x693.33 portrait on a taller phone viewport. Canvas fills the office, stage rows do not overlap, nameplates stay in bounds, no horizontal scrolling on the 390px dashboard. Non-9:16 viewports intentionally letterbox outside the stage, not inside the office." },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "Delayed 3D chunk shows the loading message in the reserved office area; successful loading removes it without shifting stage rows." },
+    "empty": { "status": "pass", "evidence": "Zero-player snapshot preserves 3D furniture and displays a clear !join invitation." },
+    "error": { "status": "pass", "evidence": "Aborted 3D chunk displays a specific rendering failure and hardware-acceleration / reload instruction instead of a blank office." },
+    "partial": { "status": "pass", "evidence": "Fifty-player snapshot shows twelve named employees with 12/50 and floor 01/05, then automatically rotates to a different floor after twelve seconds." },
+    "success": { "status": "pass", "evidence": "Ten-player and fifty-player snapshots render true 3D furniture, boss and employees. Fifteen effects share one text lane; pause and defeated boss display correctly. No unexpected page errors." },
+    "permission": { "status": "pass", "evidence": "A clean browser context has no admin token; dashboard mutation buttons remain disabled, while the public stage can render without credentials. Tests send no mutations to the running game." }
+  },
+  "renderedEvidence": [
+    { "viewport": "1080x1920", "artifact": "stage-1080.png", "observation": "Ten employees; office fills exactly three quarters of portrait frame; readable boss and separate department labels." },
+    { "viewport": "1080x1920", "artifact": "stage-50.png", "observation": "Twelve of fifty employees with long Vietnamese names wrap without overlapping adjacent names; remaining floors are explicit." },
+    { "viewport": "1080x1920", "artifact": "stage-combo.png", "observation": "Concurrent gift/hit animations use one non-overlapping event text strip." },
+    { "viewport": "390x844", "artifact": "stage-390.png", "observation": "Readable scaled portrait; no clipped names or commands; expected external letterbox on a tall phone." },
+    { "viewport": "1440x900", "artifact": "dashboard-1440.png", "observation": "Full-page desktop capture; preview retains 75-percent office ratio inside the three-column dashboard." },
+    { "viewport": "390x844", "artifact": "dashboard-390.png", "observation": "Full-page narrow dashboard capture; single-column layout has no horizontal overflow." },
+    { "viewport": "1080x1920", "artifact": "stage-error.png", "observation": "Explicit 3D-load failure with safe recovery instruction." },
+    { "viewport": "1080x1920", "artifact": "stage-loading.png", "observation": "Reserved office remains stable while its 3D chunk is delayed." }
+  ],
+  "limits": ["Headless Chromium checks do not establish production GPU FPS or actual OBS capture compatibility", "Names longer than the reserved two-line area are ellipsized; full names remain available in the title and accessible DOM", "Only twelve actors render on one floor; up to fifty snapshot employees rotate, and backend gameplay remains authoritative"]
+}

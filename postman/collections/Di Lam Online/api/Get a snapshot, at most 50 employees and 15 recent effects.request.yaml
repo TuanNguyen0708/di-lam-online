@@ -1,0 +1,18 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/api/state"
+method: GET
+headers:
+  Accept: application/json
+settings: {}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |
+      pm.test('State returns 200', () => pm.response.to.have.status(200));
+      const state = pm.response.json();
+      pm.test('Room and session are defined', () => { pm.expect(state.roomId).to.be.a('string'); pm.expect(state.sessionId).to.be.a('string'); });
+      pm.test('Visible players and effects are bounded', () => { pm.expect(state.players.length).to.be.at.most(50); pm.expect(state.effects.length).to.be.at.most(15); });
+      pm.test('Boss HP is bounded', () => { pm.expect(state.bossHp).to.be.at.least(0); pm.expect(state.bossHp).to.be.at.most(state.bossMaxHp); });
+examples: ./.resources/Get a snapshot, at most 50 employees and 15 recent effects.resources/examples
+order: 2000

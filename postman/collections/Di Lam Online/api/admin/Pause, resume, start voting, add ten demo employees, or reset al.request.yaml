@@ -1,0 +1,21 @@
+$kind: http-request
+name: Pause, resume, start voting, add ten demo employees, or reset all progress
+description: ""
+url: "{{baseUrl}}/api/admin/command"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "command": "seed"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/Pause, resume, start voting, add ten demo employees, or reset al.resources/examples
+order: 1000

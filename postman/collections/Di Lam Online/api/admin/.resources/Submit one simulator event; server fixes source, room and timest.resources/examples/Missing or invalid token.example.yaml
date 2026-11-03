@@ -1,0 +1,33 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/admin/simulate"
+  method: POST
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "eventId": "string",
+        "type": "gift",
+        "user": {
+          "platformUserId": "string",
+          "displayName": "string"
+        },
+        "payload": {
+          "text": "string",
+          "count": 1186,
+          "giftId": "string"
+        }
+      }
+response:
+  statusCode: 401
+  statusText: Unauthorized
+  headers:
+    Content-Type: text/plain
+  body:
+    type: text
+    content: ""
+order: 3000

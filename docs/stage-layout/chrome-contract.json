@@ -1,0 +1,8 @@
+{
+  "surface": "Portrait LIVE stage header and command footer, shared with dashboard preview",
+  "job": "Read every available comment command without scrolling or waiting for rotation",
+  "direction": "Office broadcast scoreboard; existing ink-green, cream, coral and brass palette; matching header and footer",
+  "constraints": ["Keep the real 3D office at exactly 75 percent of stage height", "Display every command from shared COMMANDS, not a hard-coded subset", "Show both vote dinhcong and vote lamviec in full", "Command board sits in the top HUD band (above the TikTok comment zone), never a scrolling carousel", "Readable header, connection status, day, boss HP and top-drama name without overlap", "No new dependencies, no gameplay or API mutations"],
+  "viewports": ["1080x1920", "390x844", "1440x900"],
+  "reference": "Existing 3D stage has four hard-coded command cards and minimal header/footer; user requests full commands and a more polished frame"
+}

@@ -1,0 +1,31 @@
+$kind: http-request
+name: Submit one simulator event; server fixes source, room and timestamp
+description: ""
+url: "{{baseUrl}}/api/admin/simulate"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "eventId": "string",
+      "type": "gift",
+      "user": {
+        "platformUserId": "string",
+        "displayName": "string"
+      },
+      "payload": {
+        "text": "string",
+        "count": 1186,
+        "giftId": "string"
+      }
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/Submit one simulator event; server fixes source, room and timest.resources/examples
+order: 2000
