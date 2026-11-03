@@ -2,7 +2,7 @@ import { memo, useEffect, useState, type FormEvent, type ReactNode } from 'react
 import { io } from 'socket.io-client';
 import { Activity, ArrowUpRight, BriefcaseBusiness, Building2, Camera, Check, ChevronRight, Clock, Coffee, Copy, Crown, ExternalLink, Flame, Gift, Heart, LockKeyhole, LogIn, MessageSquare, Mic, Monitor, Pause, Play, Radio, RotateCcw, Send, Settings2, ShieldCheck, Sparkles, Swords, Trophy, UserPlus, Users, Volume2, VolumeX } from 'lucide-react';
 import { COMMANDS, DEFAULT_SETTINGS, DRAMA_LABELS, PHASE_LABELS, ROLES } from '@di-lam/shared';
-import type { ActionResult, AdminCommand, GameState, Player, RoomSettings } from '@di-lam/shared';
+import type { ActionResult, AdminCommand, FeedItem, GameState, Player, RoomSettings } from '@di-lam/shared';
 import { AutomationPanel, CompanyPanel } from './AutomationPanel';
 import { Office } from './game/Office';
 import { useVoice } from './game/voice';
@@ -54,6 +54,14 @@ function Board({ title, icon, players, value, empty, tone }: { title: string; ic
     </> : <div className="stage-board-empty">{empty}</div>}
   </section>;
 }
+const FEED_TAGS: Record<FeedItem['kind'], string> = { system: 'CÔNG TY', drama: 'DRAMA', action: 'NHÂN VIÊN', gift: 'QUÀ' };
+/** Stage overlay, bottom-left: transparent chat-style "Chuyện trong công ty" feed, newest at the bottom. */
+function StageFeed({ feed, sessionId }: { feed: FeedItem[]; sessionId: string }) {
+  if (!feed.length) return null;
+  return <div className="stage-feed" aria-label="Chuyện trong công ty" aria-live="polite">
+    <ol>{feed.slice(0, 5).reverse().map(item => <li key={`${sessionId}-${item.id}`} className={item.kind}><b>{FEED_TAGS[item.kind]}</b>{item.text}</li>)}</ol>
+  </div>;
+}
 export function Stage({ state, connected, voiceBlocked = false, onUnlockVoice }: { state: GameState | null; connected: boolean; voiceBlocked?: boolean; onUnlockVoice?: () => void }) {
   const hp = state?.bossHp ?? 10000;
   const votes = state?.votes ?? { strike: 0, work: 0 };
@@ -81,6 +89,7 @@ export function Stage({ state, connected, voiceBlocked = false, onUnlockVoice }:
       </div>
     </header>
     <Office state={state}/>
+    {state && <StageFeed feed={state.feed} sessionId={state.sessionId}/>}
     <div className="stage-room-meta hud-meters">
       <Meter label="KPI" kind="kpi" value={kpiPercent(state)} hint="Tiến độ ngày làm việc + combo cả phòng"/>
       <Meter label="CỘT SỐNG" kind="spine" value={spinePercent(players)} hint="Năng lượng trung bình của nhân viên đang có mặt"/>

@@ -137,3 +137,13 @@ test('TikTok v3 identity, content, cumulative streak and duplicate finals', () =
   assert.equal(normalizer.normalize('comment', chat, NOW), null);
   assert.equal(normalizer.normalize('comment', { content: 'join', nickname: 'no stable id' }, NOW), null);
 });
+test('every successful command writes a stage feed line', () => {
+  const game = new GameEngine('test', undefined, NOW);
+  game.apply(member('feeder'), NOW);
+  for (const [index, text] of ['damsep', 'dapban', 'cafe', 'lamviec', 'ngu', 'nhay'].entries()) {
+    const before = game.data.feed[0]?.id;
+    assert.equal(game.apply(event(text, 'feeder'), NOW + (index + 1) * 60000).ok, true, text);
+    assert.notEqual(game.data.feed[0]?.id, before, `${text} should add a feed line`);
+    assert.ok(game.data.feed.some(item => item.text.includes('feeder')), `${text} feed line names the player`);
+  }
+});

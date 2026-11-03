@@ -25,6 +25,16 @@ const DRAMA_DEFAULTS = { dramaMeter: 0, dramaStage: 0, dramaCooling: false } as 
 const automationDefaults = () => ({ settings: { ...DEFAULT_SETTINGS }, speech: [], greeted: [], thanked: [], joiners: [], giftThanks: [], recent: [], greetAt: 0, shareAt: 0 });
 /** Minimum ms between two "can't do that now" bubbles for the same viewer. */
 const DENY_FEEDBACK_MS = 3000;
+/** Feed line for commands whose case below writes no feed line of its own, so every action shows on the stage feed. */
+const ACTION_FEED: Partial<Record<string, (name: string) => string>> = {
+  damsep: name => `${name} đấm sếp một cú!`,
+  dapban: name => `${name} đập bàn rầm rầm!`,
+  cafe: name => `${name} đi pha cà phê, +25 năng lượng.`,
+  lamviec: name => `${name} cắm mặt làm việc, +30 lương ảo.`,
+  cuu: name => `${name} giải cứu đồng nghiệp đang kiệt sức.`,
+  ngu: name => `${name} ngủ gật tại bàn. Zzz…`,
+  nhay: name => `${name} nhảy giữa văn phòng!`,
+};
 /** Sample viewer name for the dashboard's "nghe thử" buttons. */
 const SAMPLE_NAME = 'Mèo Mun';
 export type SpeechSample = 'greet' | 'gift' | 'follow' | 'share';
@@ -276,6 +286,7 @@ export class GameEngine {
       const choice = ['dinhcong', 'strike', '1'].includes(argument) ? 'strike' : ['lamviec', 'work', '2'].includes(argument) ? 'work' : null;
       if (!choice) return { ok: false, message: 'Dùng vote dinhcong hoặc vote lamviec.' };
       this.data.votes[id] = choice;
+      this.log(`${player.name} bỏ phiếu ${choice === 'strike' ? 'ĐÌNH CÔNG' : 'LÀM TIẾP'}.`);
       return { ok: true, message: 'Đã ghi nhận: mỗi người đúng một phiếu, có thể đổi ý.' };
     }
     const rule = COMMANDS[command];
@@ -292,6 +303,8 @@ export class GameEngine {
     player.auto = false;
     this.noteRecent(player.name);
     this.addDrama(DRAMA_POINTS[command] ?? 0);
+    const line = ACTION_FEED[command];
+    if (line) this.log(line(player.name), command === 'damsep' || command === 'dapban' ? 'drama' : 'action');
     switch (command) {
       case 'damsep': {
         const votes = this.voteCounts();
