@@ -58,6 +58,9 @@ export class OfficeScene {
   private quality: Quality = 'auto';
   private tier: Tier = 'high';
   private frameWindow: number[] = [];
+  private renderScale: number | null = null;
+  /** Fastest 120-frame average seen: the host's frame cap (OBS browser sources default to 30 FPS). */
+  private bestAverage = Infinity;
   private tierChangedAt = 0;
   private statsAt = 0;
   private framesThisSecond = 0;
@@ -119,13 +122,17 @@ export class OfficeScene {
 
   // ---------------------------------------------------------------- options
   setQuality(quality: Quality) { this.quality = quality; this.applyTier(quality === 'auto' ? this.initialTier() : quality); }
+  /** Fixed render scale (URL `&scale=`), overriding the tier's; `null` = tier default. */
+  setRenderScale(scale: number | null) { this.renderScale = scale; this.applyTier(this.tier); }
   setCameraMode(mode: CameraMode) { this.rig.mode = mode; }
   async setSound(enabled: boolean) { if (enabled) return this.audio.enable(); this.audio.disable(); return false; }
   private initialTier(): Tier { return window.devicePixelRatio > 2.5 || navigator.hardwareConcurrency <= 4 ? 'medium' : 'high'; }
   private applyTier(tier: Tier) {
     this.tier = tier; this.tierChangedAt = this.elapsed;
     const preset = TIERS[tier];
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, preset.pixelRatio));
+    // Supersample regardless of devicePixelRatio: OBS / TikTok LIVE Studio browser sources run at DPR 1, so
+    // min(DPR, …) rendered the stream at 1x while a 125–150% Windows desktop rendered the same page sharper.
+    this.renderer.setPixelRatio(this.renderScale ?? preset.pixelRatio);
     this.renderer.shadowMap.enabled = preset.shadows;
     this.sun.castShadow = preset.shadows;
     if (this.sun.shadow.mapSize.x !== preset.shadowSize) { this.sun.shadow.mapSize.set(preset.shadowSize, preset.shadowSize); this.sun.shadow.map?.dispose(); this.sun.shadow.map = null; }
@@ -134,14 +141,19 @@ export class OfficeScene {
     this.scene.traverse(object => { const material = (object as THREE.Mesh).material; if (material && !Array.isArray(material)) material.needsUpdate = true; });
     this.resize();
   }
-  /** Drop one tier when the average frame time stays above ~21 ms (below ~48 FPS). Never oscillates back up. */
+  /**
+   * Drop one tier when frames run clearly slower than the host's own frame cap (and below ~48 FPS).
+   * A 30 FPS OBS browser source used to read as "slow" and was dropped to low quality. Never oscillates back up.
+   */
   private adapt(frameSeconds: number) {
     if (this.quality !== 'auto' || this.elapsed < 4 || this.paused) return;
     this.frameWindow.push(frameSeconds);
     if (this.frameWindow.length < 120) return;
     const average = this.frameWindow.reduce((sum, value) => sum + value, 0) / this.frameWindow.length;
     this.frameWindow.length = 0;
-    if (average > 1 / 48 && this.tier !== 'low' && this.elapsed - this.tierChangedAt > 4) this.applyTier(this.tier === 'high' ? 'medium' : 'low');
+    this.bestAverage = Math.min(this.bestAverage, average);
+    const budget = Math.max(1 / 48, this.bestAverage * 1.3);
+    if (average > budget && this.tier !== 'low' && this.elapsed - this.tierChangedAt > 4) this.applyTier(this.tier === 'high' ? 'medium' : 'low');
   }
 
   // ---------------------------------------------------------------- juice

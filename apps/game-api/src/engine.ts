@@ -124,10 +124,10 @@ export class GameEngine {
     this.say(this.shareLine(this.data.recent));
     this.data.recent = [];
   }
-  /** TikTok has no "left the LIVE" event: viewers who never type a command leave the office after a long idle, so counts stay honest. */
+  /** TikTok has no "left the LIVE" event: idle viewers walk out of the office (see `AUTOMATION`), so the stage follows who is still here. */
   private autoCheckout(now: number) {
     let left = 0;
-    for (const player of this.active()) if (player.auto && now - player.lastActiveAt > AUTOMATION.autoCheckoutMs) { player.active = false; left++; }
+    for (const player of this.active()) if (now - player.lastActiveAt > AUTOMATION.autoCheckoutMs) { player.active = false; left++; }
     if (left) this.log(`${left} nhân viên đã rời phòng vì lâu không tương tác.`, 'system');
   }
   private deniedAt = new Map<string, number>();
@@ -231,6 +231,9 @@ export class GameEngine {
     if (this.seen.size > LIMITS.dedupe) this.seen.delete(this.seen.keys().next().value!);
     const id = `${input.source}:${input.user.platformUserId}`;
     const count = Math.min(input.payload.count ?? 1, 10000);
+    // a like or gift proves the viewer is still watching: keep their character in the office
+    const present = this.data.players[id];
+    if (present?.active && (input.type === 'like' || input.type === 'gift')) present.lastActiveAt = Math.max(present.lastActiveAt, now);
     if (input.type === 'like') {
       const before = Math.floor(this.data.likes / 500);
       this.data.likes += count;

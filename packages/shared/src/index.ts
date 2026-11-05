@@ -166,8 +166,11 @@ export const AUTOMATION = {
   remembered: 5000,
   /** One gift thank-you per viewer per window. */
   giftThanksMs: 30000,
-  /** Viewers who came in by joining the LIVE and never type a command leave the office after this long. */
-  autoCheckoutMs: 15 * 60000,
+  /**
+   * TikTok sends no "left the LIVE" event, so any viewer idle this long walks out of the office.
+   * Any comment, like, gift or command resets the clock.
+   */
+  autoCheckoutMs: 5 * 60000,
   /** Names thanked by the share reminder. */
   recentNames: 3,
 } as const;

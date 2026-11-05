@@ -2,10 +2,15 @@ import { useSyncExternalStore } from 'react';
 
 export type SceneQuality = 'auto' | 'high' | 'medium' | 'low';
 export type SceneCamera = 'overview' | 'follow';
-export interface SceneSettings { sound: boolean; camera: SceneCamera; quality: SceneQuality; debug: boolean }
+/** `scale`: fixed 3D render scale from the URL (`&scale=1.5`), 1–3; `null` = the quality tier's default. */
+export interface SceneSettings { sound: boolean; camera: SceneCamera; quality: SceneQuality; debug: boolean; scale: number | null }
 
 const KEY = 'office-scene-settings';
-const DEFAULTS: SceneSettings = { sound: false, camera: 'overview', quality: 'auto', debug: false };
+const DEFAULTS: SceneSettings = { sound: false, camera: 'overview', quality: 'auto', debug: false, scale: null };
+function parseScale(raw: string | null) {
+  const value = Number(raw);
+  return raw && Number.isFinite(value) ? Math.min(3, Math.max(1, value)) : null;
+}
 const listeners = new Set<() => void>();
 
 /** URL params win (OBS links: ?view=stage&sound=1&cam=follow&quality=low&debug=1), then this tab's saved choice. */
@@ -20,6 +25,7 @@ function load(): SceneSettings {
     camera: camera === 'follow' || camera === 'overview' ? camera : saved.camera ?? DEFAULTS.camera,
     quality: quality === 'high' || quality === 'medium' || quality === 'low' || quality === 'auto' ? quality : saved.quality ?? DEFAULTS.quality,
     debug: params.get('debug') === '1' || (saved.debug ?? DEFAULTS.debug),
+    scale: parseScale(params.get('scale')),
   };
 }
 let current = load();

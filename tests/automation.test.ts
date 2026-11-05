@@ -97,14 +97,25 @@ test('share reminder fires on its interval, thanks recent names, and 0 minutes d
   assert.ok(!lines(off).some(text => text.includes('chia sẻ')));
 });
 
-test('viewers who joined the LIVE but never interact leave the office; anyone who commented stays', () => {
+test('any viewer idle for 5 minutes leaves the office, commenters included; activity resets the clock', () => {
   const game = new GameEngine('test', undefined, NOW);
   game.apply(input('member', 'Lurker'), NOW);
   game.apply(input('member', 'Talker'), NOW);
-  game.apply(input('comment', 'Talker', { text: 'lamviec' }), NOW + 1000);
-  game.tick(NOW + AUTOMATION.autoCheckoutMs + 2000);
+  game.apply(input('comment', 'Talker', { text: 'lamviec' }), NOW + 60000);
+  game.tick(NOW + AUTOMATION.autoCheckoutMs + 1000);
   assert.equal(game.data.players['simulator:Lurker']!.active, false);
-  assert.equal(game.data.players['simulator:Talker']!.active, true);
+  assert.equal(game.data.players['simulator:Talker']!.active, true, 'commented 1 min later: still within 5 min');
+  game.tick(NOW + 60000 + AUTOMATION.autoCheckoutMs + 1);
+  assert.equal(game.data.players['simulator:Talker']!.active, false, 'TikTok has no leave event: idle commenters walk out');
+  assert.ok(!game.view(offline, 'memory', NOW).players.some(player => player.id === 'simulator:Talker'), 'gone from the stage roster');
+});
+
+test('likes and gifts keep a viewer in the office', () => {
+  const game = new GameEngine('test', undefined, NOW);
+  game.apply(input('member', 'Fan'), NOW);
+  game.apply(input('like', 'Fan', { count: 3 }), NOW + AUTOMATION.autoCheckoutMs - 1000);
+  game.tick(NOW + AUTOMATION.autoCheckoutMs + 1000);
+  assert.equal(game.data.players['simulator:Fan']!.active, true);
 });
 
 test('settings are validated whole: bad values and unknown keys change nothing', () => {

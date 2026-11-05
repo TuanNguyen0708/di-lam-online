@@ -46,6 +46,7 @@ export function Office({ state }: { state: GameState | null }) {
   }, []);
   useEffect(() => { if (state) scene.current?.sync(state, state.players); }, [state]);
   useEffect(() => { scene.current?.setQuality(settings.quality); }, [settings.quality, renderStatus]);
+  useEffect(() => { scene.current?.setRenderScale(settings.scale); }, [settings.scale, renderStatus]);
   useEffect(() => { scene.current?.setCameraMode(settings.camera); }, [settings.camera, renderStatus]);
   useEffect(() => { void scene.current?.setSound(settings.sound); }, [settings.sound, renderStatus]);
   useEffect(() => {
